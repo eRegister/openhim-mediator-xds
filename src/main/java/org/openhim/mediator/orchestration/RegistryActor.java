@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,7 +135,7 @@ public class RegistryActor extends UntypedActor {
             port = Integer.parseInt(config.getProperty("xds.registry.securePort"));
         } else {
             scheme = "http";
-            port = Integer.parseInt(config.getProperty("xds.registry.port"));
+            port = Integer.parseInt(config.getProperty("xds.b.registry.port"));
         }
 
         MediatorHTTPRequest request = new MediatorHTTPRequest(
@@ -180,7 +181,7 @@ public class RegistryActor extends UntypedActor {
             patientId = ((ParsedRegistryStoredQuery) msg).getPatientId();
             lookupEnterpriseIdentifier();
 
-            sendAuditMessage(ATNAAudit.TYPE.REGISTRY_QUERY_RECEIVED, true); //audit
+            //sendAuditMessage(ATNAAudit.TYPE.REGISTRY_QUERY_RECEIVED, true); //audit
 
         } else if (msg instanceof ResolvePatientIdentifierResponse) { //enrich message
             enrichEnterpriseIdentifier((ResolvePatientIdentifierResponse) msg);
@@ -195,9 +196,8 @@ public class RegistryActor extends UntypedActor {
             finalizeResponse((MediatorHTTPResponse) msg);
             if (isStoredQuery) {
                 boolean outcome = isAdhocQuerySuccessful((MediatorHTTPResponse) msg);
-                sendAuditMessage(ATNAAudit.TYPE.REGISTRY_QUERY_ENRICHED, outcome); //audit
+                //sendAuditMessage(ATNAAudit.TYPE.REGISTRY_QUERY_ENRICHED, outcome); //audit
             }
-
         } else {
             unhandled(msg);
         }

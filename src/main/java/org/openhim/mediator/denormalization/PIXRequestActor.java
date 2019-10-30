@@ -50,7 +50,6 @@ public class PIXRequestActor extends UntypedActor {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssZ");
     private static final SimpleDateFormat dateFormatDay = new SimpleDateFormat("yyyyMMdd");
 
-
     public PIXRequestActor(MediatorConfig config) {
         this.config = config;
     }
@@ -85,7 +84,7 @@ public class PIXRequestActor extends UntypedActor {
         t.set("QPD-3-1", msg.getIdentifier().getIdentifier());
         t.set("QPD-3-4", msg.getIdentifier().getAssigningAuthority().getAssigningAuthority());
         t.set("QPD-3-4-2", msg.getIdentifier().getAssigningAuthority().getAssigningAuthorityId());
-        t.set("QPD-3-4-3", "ISO");
+        t.set("QPD-3-4-3", "PI");
         t.set("QPD-3-5", "PI");
 
         t.set("QPD-4-4", msg.getTargetAssigningAuthority().getAssigningAuthority());
@@ -212,7 +211,7 @@ public class PIXRequestActor extends UntypedActor {
         } catch (HL7Exception ex) {
             msg.getOriginalRequest().getRequestHandler().tell(new ExceptError(ex), getSelf());
         } finally {
-            sendAuditMessage(ATNAAudit.TYPE.PIX_REQUEST, result, msg, result!=null);
+            //sendAuditMessage(ATNAAudit.TYPE.PIX_REQUEST, result, msg, result!=null);
         }
     }
 
@@ -252,7 +251,7 @@ public class PIXRequestActor extends UntypedActor {
             msg.getOriginalRequest().getRequestHandler().tell(new ExceptError(ex), getSelf());
         } finally {
             Identifier pid = originalRequest.getPatientIdentifiers().get(0);
-            sendAuditMessage(ATNAAudit.TYPE.PIX_IDENTITY_FEED, pid, msg, err==null);
+            //sendAuditMessage(ATNAAudit.TYPE.PIX_IDENTITY_FEED, pid, msg, err==null);
         }
     }
 

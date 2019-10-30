@@ -50,7 +50,6 @@ public class ParseProvideAndRegisterRequestActor extends UntypedActor {
         return (ProvideAndRegisterDocumentSetRequestType) result.getValue();
     }
 
-
     private void processMsg(SimpleMediatorRequest<String> msg) {
         ActorRef requestHandler = msg.getRequestHandler();
         
@@ -61,7 +60,7 @@ public class ParseProvideAndRegisterRequestActor extends UntypedActor {
         try {
             if (sendParseOrchestration) {
                 orch = new CoreResponse.Orchestration();
-                orch.setName("Parse Provider and Register Document Set.b contents");
+                orch.setName("Parse Provide and Register Document Set.b contents");
                 orch.setRequest(new CoreResponse.Request());
             }
 

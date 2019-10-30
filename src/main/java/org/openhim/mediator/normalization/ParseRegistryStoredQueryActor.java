@@ -45,7 +45,6 @@ public class ParseRegistryStoredQueryActor extends UntypedActor {
     private static final String BASE_XPATH_EXPRESSION = "//AdhocQueryRequest[1]/AdhocQuery/Slot[@name='%s']/ValueList[1]/Value";
     private static final String MESSAGEID_XPATH_EXPRESSION = "Envelope/Header/MessageID";
 
-
     private String readPatientID(String msg) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.parse(IOUtils.toInputStream(msg));
@@ -59,7 +58,6 @@ public class ParseRegistryStoredQueryActor extends UntypedActor {
         XPath xpath = XPathFactory.newInstance().newXPath();
         return xpath.compile(MESSAGEID_XPATH_EXPRESSION).evaluate(doc);
     }
-
 
     private void processMsg(SimpleMediatorRequest<String> msg) {
         try {

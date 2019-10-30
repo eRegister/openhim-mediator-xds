@@ -11,6 +11,7 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import org.apache.commons.io.IOUtils;
 import org.openhim.mediator.datatypes.Identifier;
+import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.ExceptError;
 import org.openhim.mediator.messages.EnrichRegistryStoredQuery;
 import org.openhim.mediator.messages.EnrichRegistryStoredQueryResponse;
@@ -36,6 +37,11 @@ public class EnrichRegistryStoredQueryActor extends UntypedActor {
 
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
+    private MediatorConfig config;
+
+    public EnrichRegistryStoredQueryActor(MediatorConfig config) {
+        this.config = config;
+    }
 
     private String enrichStoredQueryXML(Identifier id, InputStream xml) throws XMLStreamException {
         XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(xml);
@@ -45,9 +51,26 @@ public class EnrichRegistryStoredQueryActor extends UntypedActor {
 
         String curSlot = null;
         boolean patientIdSlot = false;
+        boolean xdsAddressElementActive = false;
 
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
+
+            if (event.getEventType() == XMLEvent.START_ELEMENT) {
+                StartElement elem = event.asStartElement();
+                if ("To".equals(elem.getName().getLocalPart())) {
+                    writer.add(event);
+                    xdsAddressElementActive = true;
+                }
+            } else if (event.getEventType() == XMLEvent.END_ELEMENT) {
+                EndElement elem = event.asEndElement();
+                if ("To".equals(elem.getName().getLocalPart())) {
+                    XMLEvent xdsRegistryAddressEvent = eventFactory.createCharacters("http://172.31.47.21:8010/axis2/services/xdsregistryb");
+                    //XMLEvent xdsRegistryAddressEvent = eventFactory.createCharacters(buildRegistryPath());
+                    writer.add(xdsRegistryAddressEvent);
+                    xdsAddressElementActive = false;
+                }
+            }
 
             if (event.getEventType() == XMLEvent.START_ELEMENT) {
                 StartElement elem = event.asStartElement();
@@ -67,7 +90,7 @@ public class EnrichRegistryStoredQueryActor extends UntypedActor {
                 }
             }
 
-            if (!patientIdSlot) {
+            if (!patientIdSlot && !xdsAddressElementActive) {
                 writer.add(event);
             }
         }
@@ -86,6 +109,13 @@ public class EnrichRegistryStoredQueryActor extends UntypedActor {
         }
     }
 
+    private String buildRegistryPath() {
+        return String.format(
+                "http://%s:%s/%s", config.getProperty("xds.registry.host"), 
+                config.getProperty("xds.b.registry.port"),
+                config.getProperty("xds.registry.path")
+        );
+    }
 
     @Override
     public void onReceive(Object msg) throws Exception {

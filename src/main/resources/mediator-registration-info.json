@@ -1,27 +1,27 @@
 {
   "urn": "urn:mediator:xds",
   "version": "1.0.2-SNAPSHOT",
-  "name": "OpenHIE XDS.b Mediator",
-  "description": "An XDS.b mediator for OpenHIE integration",
+  "name": "HL7 SHR Mediator",
+  "description": "A Shared Health Record mediator for HIE integration",
   "endpoints": [
     {
-      "name": "XDS.b Mediator",
+      "name": "HL7 SHR Mediator",
       "host": "localhost",
-      "port": "8500",
+      "port": "4000",
       "type": "http"
     }
   ],
   "defaultChannelConfig": [
     {
-      "name": "XDS.b Mediator",
+      "name": "HL7 SHR Mediator",
       "urlPattern": "^/xds(registry|repository)$",
       "type": "http",
-      "allow": ["xds"],
+      "allow": ["shrrole"],
       "routes": [
         {
-          "name": "XDS.b Mediator",
+          "name": "SHR Mediator Route",
           "host": "localhost",
-          "port": "8500",
+          "port": "4000",
           "type": "http",
           "primary": "true"
         }

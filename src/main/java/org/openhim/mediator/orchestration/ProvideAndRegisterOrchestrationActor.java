@@ -203,7 +203,7 @@ public class ProvideAndRegisterOrchestrationActor extends UntypedActor {
             respondBadRequest(ex);
             outcome = false;
         } finally {
-            sendAuditMessage(ATNAAudit.TYPE.PROVIDE_AND_REGISTER_RECEIVED, outcome);
+            //sendAuditMessage(ATNAAudit.TYPE.PROVIDE_AND_REGISTER_RECEIVED, outcome);
         }
     }
 
@@ -508,17 +508,20 @@ public class ProvideAndRegisterOrchestrationActor extends UntypedActor {
             try {
                 List<RegistryResponseError.RegistryError> errors = getResolveIdentifierErrors();
 
-                if (errors==null) {
+                respondSuccess();
+                outcome = true;
+
+                /*if (errors==null) {
                     respondSuccess();
                     outcome = true;
                 } else {
                     respondBadRequest(errors);
                     outcome = false;
-                }
+                }*/
             } catch (JAXBException ex) {
                 respondBadRequest(ex);
             } finally {
-                sendAuditMessage(ATNAAudit.TYPE.PROVIDE_AND_REGISTER_ENRICHED, outcome);
+                //sendAuditMessage(ATNAAudit.TYPE.PROVIDE_AND_REGISTER_ENRICHED, outcome);
                 return true;
             }
         }
