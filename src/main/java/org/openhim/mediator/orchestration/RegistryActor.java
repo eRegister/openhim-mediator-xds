@@ -172,6 +172,7 @@ public class RegistryActor extends UntypedActor {
     public void onReceive(Object msg) throws Exception {
         if (msg instanceof MediatorHTTPRequest) { //parse request
             log.info("Parsing registry request...");
+                        
             parseMessage((MediatorHTTPRequest) msg);
 
         } else if (msg instanceof ParsedRegistryStoredQuery) { //resolve patient id

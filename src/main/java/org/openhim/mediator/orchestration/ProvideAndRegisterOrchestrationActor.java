@@ -166,8 +166,6 @@ public class ProvideAndRegisterOrchestrationActor extends UntypedActor {
 
     /* */
 
-
-
     public ProvideAndRegisterOrchestrationActor(MediatorConfig config, ActorRef resolvePatientIdHandler,
                                                 ActorRef resolveHealthcareWorkerIdHandler, ActorRef resolveFacilityIdHandler) {
         this(config, resolvePatientIdHandler, resolveHealthcareWorkerIdHandler, resolveFacilityIdHandler, resolvePatientIdHandler);

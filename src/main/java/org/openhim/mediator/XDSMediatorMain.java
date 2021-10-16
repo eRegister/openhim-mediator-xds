@@ -20,6 +20,7 @@ import org.openhim.mediator.engine.messages.SetupHTTPSCertificate;
 import org.openhim.mediator.normalization.ParseRegistryStoredQueryActor;
 import org.openhim.mediator.orchestration.RegistryActor;
 import org.openhim.mediator.orchestration.RepositoryActor;
+import org.openhim.mediator.orchestration.HealthRecordActor;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class XDSMediatorMain {
         RoutingTable routingTable = new RoutingTable();
         routingTable.addRoute("/xdsregistry", RegistryActor.class);
         routingTable.addRoute("/xdsrepository", RepositoryActor.class);
+        routingTable.addRoute("/xdsrepositoryrest/openmrs/ws/rest/v1/obs", HealthRecordActor.class);
         return routingTable;
     }
 
@@ -61,7 +63,7 @@ public class XDSMediatorMain {
         config.setName(config.getProperty("mediator.name"));
         config.setServerHost(config.getProperty("mediator.host"));
         config.setServerPort( Integer.parseInt(config.getProperty("mediator.port")) );
-        // config.setRootTimeout(Integer.parseInt(config.getProperty("mediator.timeout")));
+        config.setRootTimeout(Integer.parseInt(config.getProperty("mediator.timeout")));
 
         config.setCoreHost(config.getProperty("core.host"));
         config.setCoreAPIUsername(config.getProperty("core.api.user"));

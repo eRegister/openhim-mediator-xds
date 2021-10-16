@@ -89,7 +89,7 @@ public class RepositoryActor extends UntypedActor {
             messageBuffer = msg.getResponseObject();
 
             if (msg.getDocuments()!=null && msg.getDocuments().size()>0) {
-                //TODO atm only a single document is handled
+                //TODO: atm only a single document is handled
                 //this is just used for 'autoRegister' and really only so that there is _some_ support for mtom.
                 mimeDocument = msg.getDocuments().get(0);
             }
@@ -237,6 +237,7 @@ public class RepositoryActor extends UntypedActor {
         if (msg instanceof MediatorHTTPRequest) {
             originalRequest = (MediatorHTTPRequest) msg;
             xForwardedFor = ((MediatorHTTPRequest)msg).getHeaders().get("X-Forwarded-For");
+ 
             readMessage();
         } else if (msg instanceof XDSbMimeProcessorActor.XDSbMimeProcessorResponse) {
             processMtomProcessorResponse((XDSbMimeProcessorActor.XDSbMimeProcessorResponse) msg);
