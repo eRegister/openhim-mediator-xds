@@ -12,6 +12,7 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -213,7 +214,13 @@ public class HealthRecordActor extends UntypedActor {
 
         } else if (msg instanceof ResolvePatientIdentifierResponse) {
             log.info("Received resolved patient identifier.");
-            getSHRPatientUuid(((ResolvePatientIdentifierResponse) msg).getIdentifier());
+
+            if(!StringUtils.isEmpty(((ResolvePatientIdentifierResponse) msg).getIdentifier().getIdentifier())){
+                getSHRPatientUuid(((ResolvePatientIdentifierResponse) msg).getIdentifier());
+            } else {
+                log.info("Patient does not have a global identifier, returning to client...");
+                finalizeResponse((MediatorHTTPResponse) msg);
+            }
 
         } else if (msg instanceof MediatorHTTPResponse) {
             if(((MediatorHTTPResponse) msg).getOriginalRequest().getOrchestration()
@@ -225,8 +232,14 @@ public class HealthRecordActor extends UntypedActor {
 
                 if(StringUtils.isNotBlank(jsonResponse)) {
                     node = mapper.readTree(jsonResponse);
-                    String uuidResponse = node.get("results").get(0).get("uuid").asText().toString();
-                    getSHRPatientObservations(uuidResponse);
+                    JsonNode results = node.get("results");
+                    if(!(((ArrayNode)results).isEmpty())) {
+                        String uuidResponse = results.get(0).get("uuid").asText().toString();
+                        getSHRPatientObservations(uuidResponse);
+                    } else {
+                        log.info("Patient does not have a corresponding uuid, returning to client...");
+                        finalizeResponse((MediatorHTTPResponse) msg);
+                    }
                 }
 
             } else {
